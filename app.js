@@ -3,6 +3,19 @@ const {
 } = require('electron');
 
 
+let fpsCnt = 0
+function fpsTick() {
+    fpsCnt++
+    window.requestAnimationFrame(fpsTick)
+}
+fpsTick()
+var fpsInterval = setInterval(() => {
+    // do the thing with fps
+    document.getElementById('fps').innerHTML = fpsCnt + ' FPS'
+    fpsCnt = 0
+}, 1000)
+
+
 var socket = initWebSocket();
 getOwnWindow().then(win => {
     let video = document.querySelector('video');
@@ -13,6 +26,7 @@ getOwnWindow().then(win => {
     //give a name and a bounding box
     //giving x,y,width and height
     loadChars();
+
     initCapture(video, {
         'time': [100, 44, 200, 23],
         'speed': [70, 224, 105, 23],
@@ -107,12 +121,41 @@ function initCapture(video, slices) {
             data[spec.name] = result;
             return data;
         }, {});
-        log(result);
-        socket.send('telemetry',result);
+        /*
+         {
+         "time": "00:00:05",
+         "speed": "00010",
+         "altitude": "00.2"
+         }
+
+         {
+         "time": "00:01:24",
+         "speed": "00570",
+         "altitude": "17.1"
+         }
+
+         {
+         "time": "00:03:22",
+         "speed": "02072",
+         "altitude": "113"
+         }
+         */
+
+        if (
+            /^\d{2}:\d{2}:\d{2}$/.test(result.time) &&
+            /^\d{5}$/.test(result.speed) &&
+            /^(?:\d{3}|\d{2}\.\d)$/.test(result.altitude)
+        ) {
+          log(result);
+          socket.send('telemetry',result);
+        } else {
+          log('bad frame');
+        }
+
         requestAnimationFrame(draw);
     }
 
-    draw();
+    setTimeout(draw, 2000);
 }
 
 var classifierContext = document.querySelector('#classifier').getContext('2d');
@@ -173,8 +216,16 @@ function classify({ctx, el}, slice) {
 // first step is to capture the area of interest to greyscale (upper half)
 // next step is to only crop out individual characters based on segmentation (lower half)
 function slice(boundingBox, video, spec) {
+    let baseX = 0;
+    let baseY = 23;
+
     var {ctx, el} = spec;
     var [x, y, w, h] = boundingBox;
+
+    // apply calibration
+    x += baseX
+    y += baseY
+
     ctx.drawImage(video, x, y, w, h, 0, 0, w, h);
     //get it back as data, make bw and put it
     var [imageData, slices] = toBlackAndWhite(ctx.getImageData(0, 0, w, h), boundingBox);
@@ -209,13 +260,13 @@ function toBlackAndWhite(imageData, boundingBox) {
         data[i + 1] = bw;
         data[i + 2] = bw;
     }
-    var threshold = (whitest + blackest) / 2;
+    var threshold = (whitest + blackest) * 0.4;
     var segments = {cols: [], rows: []};
     //threshold the greyscale image in the middle of the range
     //storing segment boundaries in the meantime
     for (var i = 0; i < data.length; i += 4) {
         var bw = br = data[i];
-        var range = 20;
+        var range = 10;
         if (br < (threshold - range)) {
             bw = 0;
         }
@@ -291,7 +342,7 @@ function initWebSocket() {
 
     //handle messages received
     ws.onmessage = function(msg) {
-        console.log(JSON.parse(msg.data));
+        // console.log(JSON.parse(msg.data));
     };
 
     //send messages

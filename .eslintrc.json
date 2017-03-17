@@ -1,0 +1,41 @@
+{
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true,
+    "mocha": true
+  },
+  "extends": "eslint:recommended",
+  "rules": {
+    "strict": [
+      "error",
+      "global"
+    ],
+    "indent": [
+      "error",
+      4
+    ],
+    "linebreak-style": [
+      "error",
+      "unix"
+    ],
+    "semi": [
+      "error",
+      "never"
+    ],
+    "no-console": [
+      "warn"
+    ],
+    "require-jsdoc": ["error", {
+      "require": {
+        "FunctionDeclaration": true,
+        "MethodDefinition": true,
+        "ClassDeclaration": false
+      }
+    }],
+    "valid-jsdoc": ["error", {
+      "requireParamDescription": false,
+      "requireReturnDescription": false
+    }]
+  }
+}

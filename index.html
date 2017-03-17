@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <title>youtube capturing</title>
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
         iframe {
             position: absolute;
             top: 0;
@@ -16,6 +20,7 @@
             height: 300px;
             overflow: hidden;
             pointer-events: none;
+            cursor: none;
         }
         #result {
             display: inline-block;
@@ -31,19 +36,34 @@
         #debug {
             width: 200px;
         }
+
+        #buffers {
+            cursor: none;
+            background-color: gray;
+        }
     </style>
 </head>
 <body>
+    <!-- calibration box -->
+    <div style="display:block; background-color: #00ff00; width: 5px; height: 5px; position:absolute; left: 0; top: 0; z-index:1000"></div>
+
+    <!--
+        Iridium-1   https://www.youtube.com/embed/7WimRhydggo?start=1160&autoplay=1
+        https://www.youtube.com/embed/v8U2KXZzvtA?start=1830&autoplay=1
+        Echostar XXIII  https://www.youtube.com/embed/lZmqbL-hz7U?autoplay=1&start=1060
+    -->
     <div id="frame">
-        <iframe width="1920" height="1080" src="https://www.youtube.com/embed/v8U2KXZzvtA?autoplay=1" frameborder="0" allowfullscreen></iframe>
+        <iframe width="1920" height="1080" src="https://www.youtube.com/embed/lZmqbL-hz7U?autoplay=1&start=1060" frameborder="0" allowfullscreen></iframe>
     </div>
     <div id="result">
         <div id="buffers"></div>
         <canvas id="classifier" width="200" height="16"></canvas>
         <img id="chars" src="characters.png">
         <pre id="debug"></pre>
+        <pre id="fps"></pre>
     </div>
     <video style="display:none"></video>
+    <!--<video></video>-->
     <script src="app.js"></script>
 </body>
 </html>

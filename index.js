@@ -15,7 +15,10 @@ let mainWindow
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 660, height: 330, resizable: false});
+  mainWindow = new BrowserWindow({width: 720, height: 350, resizable: false});
+
+  mainWindow.setMenu(null);
+
   // mainWindow.maximize();
   // mainWindow = new BrowserWindow({width: 800, height: 600})
 
