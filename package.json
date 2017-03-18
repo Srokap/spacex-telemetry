@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron --disable-gpu .",
     "mhub-server": "mhub-server",
-    "mhub": "mhub-client -l -o jsondata > output/data.json"
+    "mhub": "mhub-client -l -o jsondata > output/data.json",
+    "lint": "eslint ."
   },
   "author": "",
   "license": "ISC",
@@ -15,5 +16,8 @@
     "electron": "^1.4.14",
     "electron-screencapture": "^1.1.0",
     "mhub": "^0.7.1"
+  },
+  "devDependencies": {
+    "eslint": "^3.18.0"
   }
 }
